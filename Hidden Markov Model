@@ -1,0 +1,31 @@
+import numpy as np
+import itertools
+import pandas as pd
+states = ['sleeping', 'eating', 'walking']
+hidden_states = ['healthy', 'sick']
+pi = [0.5, 0.5]
+state_space = pd.Series(pi, index=hidden_states, name='states')
+print(state_space)
+a_df = pd.DataFrame(columns=hidden_states, index=hidden_states)
+a_df.loc[hidden_states[0]] = [0.7, 0.3]
+a_df.loc[hidden_states[1]] = [0.4, 0.6]
+print(a_df)
+b_df = pd.DataFrame(columns=states, index=hidden_states)
+b_df.loc[hidden_states[0]] = [0.2, 0.6, 0.2]
+b_df.loc[hidden_states[1]] = [0.4, 0.1, 0.5]
+print(b_df)
+def HMM(obsq, a_df, b_df, pi, states, hidden_states):
+    hidst = list(itertools.product(hidden_states, repeat=len(obsq)))
+    print(hidst)
+    total_prob = 0
+    for sequence in hidst:
+        prob = 1
+        for t in range(len(sequence)):
+            if t == 0:
+                prob *= pi[hidden_states.index(sequence[t])] * b_df.loc[sequence[t], obsq[t]]
+            else:
+                prob *= a_df.loc[sequence[t - 1], sequence[t]] * b_df.loc[sequence[t], obsq[t]]
+        total_prob += prob
+    return total_prob
+obsq = ['walking', 'walking', 'walking']
+print(HMM(obsq, a_df, b_df, pi, states, hidden_states))
