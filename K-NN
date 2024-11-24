@@ -1,0 +1,15 @@
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import datasets
+import pandas as pd
+iris = datasets.load_iris()
+X = pd.DataFrame(iris.data, columns=['Sepal_Length', 'Sepal_Width', 'Petal_Length', 'Petal_Width'])
+y = pd.DataFrame(iris.target, columns=['Targets'])
+x_train, x_test, y_train, y_test = train_test_split(iris.data, iris.target, test_size=0.1)
+classifier = KNeighborsClassifier(n_neighbors=3)
+classifier.fit(x_train, y_train)
+y_pred = classifier.predict(x_test)
+print("Classification Results:")
+for i in range(len(x_test)):
+    print(f"Sample: {x_test[i]}, Actual: {y_test[i]}, Predicted: {y_pred[i]}")
+print("Accuracy:", classifier.score(x_test, y_test))
